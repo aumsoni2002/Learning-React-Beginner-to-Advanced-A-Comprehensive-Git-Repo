@@ -1,0 +1,356 @@
+------------------------------------------------------------------------------------ Critical Questions ------------------------------------------------------------------------------------
+Learning React: Beginner to Advanced - A Comprehensive Git Repo
+This Git repository is a complete React learning resource, featuring all my personal projects built while learning React. 
+Detailed comments explain concepts implemented in each project, aiding learners in building advanced React applications with ease.
+
+-- Critical Questions
+
+● So what's React all about?
+React displays HTML to our users and changes that HTML when the user tires to interact with that HTML 
+by clicking, typing, dragging or dropping something on that HTML.
+
+ How do we tell React to show HTML?
+ It is done by JSX,   
+ JSX is a syntax extension for JavaScript that allows developers to write HTML-like code within their JavaScript code. 
+ It is a key part of the React library, as it allows developers to define the structure and content of React components in a more intuitive and expressive way.
+ With JSX, developers can write markup elements (such as <div> or <span>) and include JavaScript expressions inside curly braces (such as {props.name} or {2 + 2}). 
+ JSX then compiles these elements into regular JavaScript function calls that create React elements.
+
+ Difference between Normal HTML Tags and Component Rendering Tags
+ <h1> ... </h1>		:- Normal HTML Tag
+ <reactComponent/>	:- Component Rendering Tag  
+
+
+-- A Few More Critical Questions
+
+● How does a React app start up?
+  1. All of your project's JS files are 'bundled' together into a single file, then placed onto a server 
+  2. User makes a request to the server and gets an HTML file + the bundle
+  3. User's browser executes your code	
+ 
+● What were the useState functions?
+‘useState' is a function that works with React's "state" system
+State is like a variable in React
+State is used to store data that changes over time
+Whenever state changes, React automatically updates content on the screen
+
+
+-- Creating a React Project
+
+npx create-react-app jsx	:- to creat a react app by the name 'jsx'
+npm start			: to start our created project.(the terminal must be opened inside the 'jsx' folder)
+
+
+-- What is Create React App
+There are many files that contain code that a broswer does not know how to execute. 
+Code such as JSX cannot be directly execute by the browser. It is not valid javascript.
+The development server which gets start when we run the application. This development server runs mainly two tools which turn this JSX into normal JavaScript.
+Those two tools are Babel and Webpack.
+Babel is a tool which convert all JSX into normal JavaScript.
+Webpack is a tool which merges all project files into a single file(bundle js file). 
+
+
+--------------------------------------------------------------------------------- Showing Basic Content ------------------------------------------------------------------------------------
+
+-- Showing Basic Content
+
+The 'index.js' is the first file which gets executed when the project runs inside the browser.
+
+● There are five steps to follow to render a component on to a browser.
+1. Import The React and ReactDOM Libraries
+   React   : Library that defines what a component is and how multiple components work together.
+   ReactDOM: Library that knows how to get a component to show up in the browser.
+2. Get a reference to the div with id root.
+   the 'index.html' will get render first in which we have an element with id="root" from where the execution will get start.
+3. Tell React to take control of that element.
+4. Create a component
+   a component is just a function with logic and returns some JSX.
+5. Show the component on the screen
+   To show a function's content. it must return something at the end of the function.
+
+
+-- Converting HTML to JSX
+
+1. All prop names follow camelCase
+2. Number attributes use curly braces Boolean 'true' can be written with just the
+3. property name. 'False' should be written with curly braces
+4. The 'class' attribute is written as 'className'
+5. In-Line styles are provided as objects
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Videos From 93 to 102
+
+• Adding elements to the Start of an array
+const [colors, setColors] = useState([]);
+const addColor = (newColor) => {
+  const updatedColors = [newColor, ...colors];
+  setColors(updatedColors);
+};
+
+
+• Adding elements to the End of an array
+const [colors, setColors] = useState([]);
+const addColor = (newColor) => {
+  const updatedColors = [...colors, newColor];
+  setColors(updatedColors);
+};
+
+
+• Adding elements to the Middle of an array
+const [colors, setColors] = useState([]);
+const addColor = (newColor, index) => {		// here we have to enter an index number. the number after which you want to add the new element.
+  const updatedColors = [
+    ...colors.slice(0, index),			// here taking everything from start of old array to ‘index'
+    newColor,					// here adding the new element
+    ...colors.slice(index),			// here taking everything from index to end
+  ];
+  setColors(updatedColors);
+};
+
+
+• Removing an element with a particular value from an array
+const [colors, setColors] = useState(["red", "green", "blue"]);
+const removeColor = (colorToRemove) => {          	// the function 'removeColor' takes an argument that is which color to remove
+  const updatedColors = colors.filter((color) => {	// the filter method returns all the elements in the 'colors' that meets the specified condition in the call-back function
+    return color !== colorToRemove;               	// here is that specified condition
+  });
+  setColors(updatedColors);
+};
+
+
+• Removing an element through its index number from an array
+const [colors, setColors] = useState(["red", "green", "blue"]);
+const removeColor = (indexToRemove) => {          		// the function 'removeColor' takes an argument that is which color to remove
+  const updatedColors = colors.filter((color, index) => {	// the filter method returns all the elements in the 'colors' that meets the specified condition in the call-back function
+    return index !== indexToRemove;               		// here is that specified condition
+  });
+  setColors(updatedColors);
+};
+
+
+• Removing an element with a particular property
+const [books, setBooks] = useState([
+    { id: 1, title: "Harry Porter" },
+    { id: 2, title: "Dark Tower" },
+]);
+
+const removeBookById = (id) => {
+  const updatedColors = books.filter((book) => {
+    return book.id !== id;
+  });
+  setBooks(updatedColors);
+};
+
+
+• Modifying an element with the help of its id in an array of objects.
+const [books, setBooks] = useState([
+    { id: 1, title: "Harry Potter" },
+    { id: 2, title: "Dark Tower" },
+]);
+const updateBookById = (id, newTitle) => {
+  const updatedBooks = books.map((book) => {
+    if (book.id === id) {
+      return { ...book, title: newTitle };
+    }
+    return book;
+  });
+  setBooks(updatedBooks);
+};
+
+
+• Adding or Changing properties to an object
+const [fruit, setFruit] = useState({
+  color: "red",
+  name: "apple",
+});
+const changeColor = (color) => {
+  const updatedFruit = {		// creating a new object
+    ...fruit,				// coping and pasting all key:value pairs of 'fruit' object into that newly created object.
+    color: color,			// Now that newly created object will have a key 'color'. And it's value will get change with the new value that we sent as an argument.
+  };
+  setFruit(updatedFruit);
+};
+
+
+
+• Removig Properties from an object
+const [fruit, setFruit] = useState({
+    color: "red",
+    name: "apple",
+  });
+  const removeColor = () => {
+    // here we are coping and pasting the first key:value pair of 'fruit' into 'color' variable and the remaining into 'rest' object.
+    const { color, ...rest } = fruit; 
+    setFruit(rest);   // here we are saving the remaining key:value pairs into the 'Fruit' object
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
