@@ -13,8 +13,8 @@ function App() {
   const { fetchBooks } = useContext(BookContext); // here we took out the 'fetchBooks' function from 'BookContext' context so that we call the function here.
 
   useEffect(() => {
-    fetchBooks();
-  }, []);
+    fetchBooks();     // while using useEffect, it can only return a function.
+  }, [fetchBooks]);
 
   return (
     <div className="app">
@@ -80,11 +80,83 @@ export default App;
    It is a data inside of our application, that is used by ver few components. 
 */
 
-
 /*
 -- Hooks
    Functions that add additional features to a component
    useState   -->   Allows a component to use the state function.
    useEffect  -->   Allows a component to use run code at specific points in time.
    useContext -->   Allows a function to access values stored in context.
+*/
+
+/*
+ -- useEffect Warning:  React Hook useEffect has a missing dependency: ' '. Either include it or remove the dependency array.
+    State Variable Reference:
+    While using useEffect, we have to be careful while making use of dependency array in it. 
+    The basic concept of putting an empty dependency array is that the useEffect function will only run one time at the time of first render.
+    Let us take an example where we have a useState: const [counter, setCounter] = useState(0);
+    Now assume that we have put an 'onClick' function on an entire page which increase the value of 'counter' by 1.
+    And with that we also have put a useEffect with an arrow function which console logs the value of 'counter' onto the terminal.
+    But the important part here is that We have put empty dependency array which means that the useEffect will only run one time 
+    which is at the time of first render.
+    How useState work is when the component renders for the first time, The JavaScript will save the value of counter that is '0' into our
+    Computer Memory and reference it with 'counter' variable. And whenever the component re-renders on click, The JavaScript will not go 
+    to the existed memory location of that old value that is '0' and update it by '1'. But the JavaScript will create a new variable by the 
+    same name 'counter' and it will save the new value that is '1' into a new computer memory location reference it will new variable. 
+    Now we can say that there are two variables by the same name but different value and at different location.
+    That is how useState works at every render and how we gets the updated value.
+    
+    The Problem we face is that we have put an empty dependency array on the useEffect so it will only run one time at first render.
+    Now after the first render, the useEffect will not run at any further renders, that is why the console log inside that useEffect
+    will only show us the first value of 'counter' at every clicks.
+
+    How to Identify the Bug:
+    Whenever a useEffect function contains an another function which refers to a variable, There is a big chance of getting this bug.
+
+ -- Solution:
+    The Simple solution is to make our useEffect functions re-runs at every renders.
+    To do that, we know we can put a variable into our dependency array and whenever the value of that variable changes, the useEffect will
+    re-run. So when the useEffect function has another function which is refering to a variable, we can take that variable and put it
+    inside the dependency array.
+    But this solution will not work every time. That is when we can use of useCallback.
+*/
+
+/*
+ -- useCallback
+    In React, When a Component re-renders, All of the functions that are inside of that component gets re-created. And the JavaScript stores
+    those newly created functions into our Computer Memory in new locations at every render. Now sometimes, we do not want to re-create functions
+    on re=renderning of component. That's where the 'useCallback' hook comes. 
+    
+    The 'useCallback' function takes a function and a dependency array as its argument.
+    1. Consider the dependency array is empty:
+    In the first render of the component, The useCallback function will create the function that it has taken as an argument and stores it into
+    our computer's memory at some location. Now after the first render, whenever the component renders again, The useCallback function will
+    not create a new function but it will only gives us back the first created function which we have already stored into our computer's memory
+    when it rendered for the first time.
+    Now this will only happen when we keep the dependency array empty.
+    
+    2. Consider the dependency array is not empty and it has a variable.
+    In the first render, It will work as same as above that is The useCallback function will create the function that it has taken as an argument 
+    and stores it into our computer's memory at some location. Now there are two possibilites. First is that after the first render, 
+    whenever the component renders again, If the value of the variable that is inside the dependency array is changed, the useCallback 
+    function will re-create the function and stores that newly created function into a new computer memory location. And second is if the
+    value of that variable is not changed, it will give us back the last created function which we have already stored into our computer's memory
+    when it rendered the last time.        
+*/
+
+/*
+ -- 'return' statement in useEffect
+    useEffect(() => {
+      const cleanUp = () =>{
+        console.log("log will be shown in next render!")
+      }
+      return cleanUp;
+    }, [someVariable]);
+
+
+    How 'return' works in useEffect:
+    In the first render, when the function 'cleanUp' inside the useEffect is called, it gets return.
+    But that returned function is only called in the second render. That is the console log that we see in the terminal is shown 
+    after the component rendered for the second time. And second render can only happen, when the somevariable's value got changed.
+    If the second render does not happen, we will not see any console log in the terminal.
+
 */

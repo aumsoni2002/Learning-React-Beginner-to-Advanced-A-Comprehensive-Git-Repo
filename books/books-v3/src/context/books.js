@@ -1,19 +1,25 @@
 // To change the value of a Context and updating it on Screen, we need to make use of useState here.
 
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 
 const BookContext = createContext(); // here we are creating a context object by the name 'BookContext'
 
 function Provider({ children }) {
   const [books, setBooks] = useState([]);
 
-  const fetchBooks = async () => {
+  /*
+  The purpose here to make use of useCallback function is to make sure that the arrow function 'fetchbooks' has been created 
+  and stored into memory only one time because we have put the dependency array as empty. And whenever this function is called, 
+  it will only call the existed created 'fetchBooks' function from the computer memory..  
+  */
+  const fetchBooks = useCallback(async () => {
     console.log("fetchBooks got called!!");
     const response = await axios.get("http://localhost:3001/books");
     setBooks(response.data);
-  };
+  }, []);
 
+  
   const createBook = async (newTitle) => {
     const response = await axios.post("http://localhost:3001/books", {
       title: newTitle,
