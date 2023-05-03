@@ -1,0 +1,122 @@
+import { useState } from "react";
+
+function Accordion({ items }) {
+  const [expandedIndex, setExpandedIndex] = useState(0);
+
+  // here with the help of 'map' function, we are going through each element of the 'items' array of object and showing that object's
+  // key: value pair's 'values' in the form of JSX.
+  const renderedItems = items.map((item, index) => {
+    // In below variable, it will check for every item's index value and if it matches, true will be saved and 
+    // if not, false will be saved
+    const isExpanded = index === expandedIndex;    
+
+    // here we will use conditional rendering concept. the variable 'content' will change as per the value of isExpanded. 
+    // the '<div>{item.content}</div>' always stays true. 
+    const content = isExpanded && <div>{item.content}</div> 
+    return (
+      <div key={item.id}> {/* The 'key' here is neccessary to be given to each item while returing it.*/}
+        <div>{item.label}</div>
+        {content}
+      </div>
+    );
+  });
+  return <div>{renderedItems}</div>;
+}
+
+export default Accordion;
+
+/*
+-- State Design Process Overview -- Accordion
+   Events + State Design Process
+   1. List out what a user will do and changes they will see while using our app (What state + event handlers are there?)
+      • How would a user describe using this app step by step?
+        consider there are 3 sections, first is expanded and other two are collaped.
+        Now when the user clicks on second section, it gets expanded, first gets collapsed and third was already collapsed.
+
+   2. Categorize each step as 'state' or ‘event handler’ (What state + event handlers are there?)
+      • User sees something on the screen change: collapse/expand 
+        We probably need 'state' to implement this step
+      • User committed some action: click
+        We probably need 'event handler' to implement this step   
+
+   3. Group common steps. Remove duplicates. Rewrite descriptions (What state + event handlers are there?)
+      • Click           -- event handler
+      • collapse/expand -- state
+
+   4. Look at mockup. Remove or simplify parts that are not changing (what name and type?)
+      • label text is not changing 
+      • content text is not changing
+
+   5. Replace remaining elements with text descriptions (what name and type?)
+      • Simple Text Description for sections that get collapse and expand
+        Section 1: Expanded  
+        Section 2: Collapsed
+        Section 3: Collapsed
+
+   6. Repeat step 4 and 5 with a different variation (what name and type?)
+      • Variation 2
+        Section 1: Collapsed  
+        Section 2: Collapsed
+        Section 3: Expanded
+       
+      • Variation 3, 4, ...  
+
+   7. Imagine you have to write a function that returns the text of steps #5 and #6. In addition to your component props, what
+      other arguments would you need? (what name and type?)
+      • How the function will look like
+        function myFunction(items, expandedIndex){
+          return items.map((item, index) =>{
+            if(index === expandedIndex){
+              return 'Expanded';
+            }
+            else{
+              return 'Collapsed';
+            }
+          });
+        }
+
+        myFunction(propsItems, 0);   // ['Expanded', 'Collapsed', 'Collapsed'];
+        myFunction(propsItems, 2);   // ['Collapsed', 'Collapsed', 'Expanded']; 
+
+        state name: expandedIndex
+        state type: number
+
+   8. Decide where each event handler + state will be defined?
+      • Does any component besided Accordion reasonably need to know which item is expanded?
+        Yes: Define in App component
+        No:  Define in Accordion component
+        Here in our case, the answer is No. We do not need any other component to show or use 'expandedIndex' other than Accordion.
+
+        Event handler should usually be defined in same component as state it modifies but it might be used in different component
+        
+        Accordion Component will have:
+        state:          expandedIndex(number)
+        Event Handler:  handleClick
+ */
+
+/*
+-- Conditional Rendering
+   • React does not print booleans, nulls and undefined
+     "aum"      --  'aum' is printed on screen.
+     12         --     12 is printed on screen
+     true       --   true is not printed on screen.
+     false      --   true is not printed on screen.
+     undefined  --   true is not printed on screen.
+
+   • JS Boolean Expressions
+     || gives back the first value that is truthy
+     Example:
+     'hi'   ||  'there'     --      'hi'
+     false  ||  'there'     --      'there'
+     0      ||  true        --      true
+     50     ||  null        --      50
+     100    ||  200         --      100
+
+     && gives back the first falsey value or the last truthy value
+     Example:
+     'hi'   &&  'there'     --      'there'
+     false  &&  'there'     --      'false'
+     0      &&  true        --      0
+     50     &&  null        --      null
+     100    &&  200         --      200
+*/        
