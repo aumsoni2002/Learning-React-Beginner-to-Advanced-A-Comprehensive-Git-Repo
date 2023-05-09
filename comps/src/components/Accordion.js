@@ -1,8 +1,19 @@
 import { useState } from "react";
+import { GoChevronDown, GoChevronLeft } from "react-icons/go";
 
 function Accordion({ items }) {
-  const [expandedIndex, setExpandedIndex] = useState(0);
+  const [expandedIndex, setExpandedIndex] = useState(-1);
 
+  // the below function 'handleClick' function has a parameter 'renderedItemsIndex'.
+  // the body of below function is just setting the value of 'expandedIndex' that is coming as the function's parameter.
+  const handleClick = (renderedItemsIndex) =>{
+    if(expandedIndex === renderedItemsIndex){
+      setExpandedIndex(-1);
+    }else{
+      setExpandedIndex(renderedItemsIndex);
+    }
+  }
+  
   // here with the help of 'map' function, we are going through each element of the 'items' array of object and showing that object's
   // key: value pair's 'values' in the form of JSX.
   const renderedItems = items.map((item, index) => {
@@ -10,17 +21,32 @@ function Accordion({ items }) {
     // if not, false will be saved
     const isExpanded = index === expandedIndex;    
 
+    // Displaying Icon as per the value of isExpanded
+    const icon = <span className="text-2xl">{isExpanded ? <GoChevronDown/> : <GoChevronLeft/>}</span>
+
     // here we will use conditional rendering concept. the variable 'content' will change as per the value of isExpanded. 
     // the '<div>{item.content}</div>' always stays true. 
-    const content = isExpanded && <div>{item.content}</div> 
-    return (
-      <div key={item.id}> {/* The 'key' here is neccessary to be given to each item while returing it.*/}
-        <div>{item.label}</div>
+    // && gives back the first falsey value or the last truthy value
+    const content = isExpanded && <div className="border-b p-5" >{item.content}</div> // if isExpandes is true, the div part is going to be saved and it will be shown on screen.
+    
+    // This whole 'return' statement is running for 3 times as there are 3 elements in 'items' while mapping through it.
+    // Each return statement will have increasing index value starting from 0.
+    // As we have put an onClick event handler on the section heading where we are setting 'index' value to expandedIndex,
+    // All the 3 headings that we see on the screen will have this onClick event handler and will set the value as per its 'index' value.
+    // Such as: heading 1 has an index value '0', so clicking on heading 1, expandedIndex's value will be set to '0'.
+    // same with heading 2 which has index value '1' and heading 3 which has index value '2'
+    return ( 
+      <div key={item.id}> {/* The 'key' here is neccessary to be given to each item while returing it. */}
+        <div className="flex justify-between p-3 bg-gray-50 border-b items-center cursor-pointer" onClick={()=> handleClick(index)} > {/*here we are sending 'index' value as an argument*/}
+          {item.label}
+          {icon}    
+        </div> 
         {content}
       </div>
     );
   });
-  return <div>{renderedItems}</div>;
+
+  return <div className="border-x border-t rounded">{renderedItems}</div>;
 }
 
 export default Accordion;
@@ -119,4 +145,42 @@ export default Accordion;
      0      &&  true        --      0
      50     &&  null        --      null
      100    &&  200         --      200
-*/        
+*/
+
+/*
+-- Event Handler
+   • How it should works in this project
+   If user clicks on section 1 heading, we want to run setExpandedIndex(0). So that we can see content of section 1.
+   If user clicks on section 2 heading, we want to run setExpandedIndex(1). So that we can see content of section 2.
+   If user clicks on section 3 heading, we want to run setExpandedIndex(2). So that we can see content of section 3.
+   
+   • Inline Event Handler
+   <div onClick={()=> setExpandedIndex(index)} >{item.label}</div>
+
+   • Normal Event Handler [Below both things should be in same scope that is should be in same curly brackets]
+   const handleClick = () =>{
+    setExpandedIndex(index)
+   }
+   <div onClick={()=> handleClick()} >{item.label}</div>
+
+   • Mix both above Event Handler [Below both things does not require to be in same scope as we have put a parameter to be used.]
+   const handleClick = (renderedItemsIndex) =>{
+    setExpandedIndex(renderedItemsIndex)
+   }
+   <div onClick={()=> handleClick(index)} >{item.label}</div>
+*/
+
+/*
+-- Functional State Updates:   Video 188 and 189
+   Use this method only when we have to do a conditional update to our state that depends upon the old value of htat same state. 
+
+   const handleClick = (renderedItemsIndex) => {
+    setExpandedIndex((currentExpandedIndex) => {
+      if (expandedIndex === renderedItemsIndex) {
+        return -1;
+      } else {
+        return renderedItemsIndex;
+      }
+    })
+   }
+*/
